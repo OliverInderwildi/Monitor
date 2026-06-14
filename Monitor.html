@@ -46,11 +46,13 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
 .monitor-hero p{font-size:1.05rem;font-weight:300;color:var(--cream-dim);max-width:640px;line-height:1.75;font-style:italic;border-left:2px solid var(--gold);padding-left:1.25rem;}
 .monitor-meta{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,191,176,0.45);margin-top:1.75rem;}
 
-/* ── Demo banner ── */
+/* ── Status banner ── */
 .demo-banner{background:var(--gold-pale);border-bottom:1px solid var(--rule);}
+.demo-banner.live{background:#eef4ef;}
 .demo-banner .container{padding-top:0.85rem;padding-bottom:0.85rem;}
 .demo-banner p{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;color:var(--ink-soft);text-transform:uppercase;}
 .demo-banner strong{color:var(--gold);}
+.demo-banner.live strong{color:var(--up);}
 
 /* ── Cards (one per row, dual chart) ── */
 .monitor-grid{padding:3rem 0 4.5rem;}
@@ -131,9 +133,9 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
     </div>
   </header>
 
-  <div class="demo-banner">
+  <div class="demo-banner" id="banner">
     <div class="container">
-      <p><strong>Mockup preview</strong> — figures and curves below are illustrative sample data, not live quotes. Real feeds wire in next.</p>
+      <p id="banner-text"><strong>Loading…</strong> — fetching latest values.</p>
     </div>
   </div>
 
@@ -148,16 +150,16 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
               <p class="card-tag">Energy · Fossil Benchmark</p>
               <h2 class="card-name">Brent Crude</h2>
               <p class="card-unit">USD / barrel</p>
-              <div class="card-price">$73.40</div>
-              <div class="card-change down">▼ 1.2% today</div>
-              <p class="card-src">Source: ICE / EIA</p>
+              <div class="card-price" id="px-brent">—</div>
+              <div class="card-change" id="ch-brent"></div>
+              <p class="card-src">Source: ICE · Yahoo Finance</p>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>5-Year</span><span class="delta">+12%</span></div>
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-brent"></span></div>
               <div class="chart-wrap"><canvas id="brent-5y"></canvas></div>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>1-Month</span><span class="delta down">−4%</span></div>
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-brent"></span></div>
               <div class="chart-wrap"><canvas id="brent-1m"></canvas></div>
             </div>
           </div>
@@ -170,16 +172,16 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
               <p class="card-tag">Carbon · EU-ETS</p>
               <h2 class="card-name">EUA Carbon Price</h2>
               <p class="card-unit">EUR / tCO₂e</p>
-              <div class="card-price">€72.10</div>
-              <div class="card-change up">▲ 0.9% today</div>
+              <div class="card-price" id="px-eua">—</div>
+              <div class="card-change" id="ch-eua"></div>
               <p class="card-src">Source: Ember / EEX</p>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>5-Year</span><span class="delta up">+128%</span></div>
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-eua"></span></div>
               <div class="chart-wrap"><canvas id="eua-5y"></canvas></div>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>1-Month</span><span class="delta up">+6%</span></div>
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-eua"></span></div>
               <div class="chart-wrap"><canvas id="eua-1m"></canvas></div>
             </div>
           </div>
@@ -192,16 +194,16 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
               <p class="card-tag">Metal · Electrification</p>
               <h2 class="card-name">Copper</h2>
               <p class="card-unit">USD / tonne</p>
-              <div class="card-price">$9,540</div>
-              <div class="card-change up">▲ 1.6% today</div>
-              <p class="card-src">Source: LME</p>
+              <div class="card-price" id="px-copper">—</div>
+              <div class="card-change" id="ch-copper"></div>
+              <p class="card-src">Source: COMEX · Yahoo Finance</p>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>5-Year</span><span class="delta up">+38%</span></div>
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-copper"></span></div>
               <div class="chart-wrap"><canvas id="copper-5y"></canvas></div>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>1-Month</span><span class="delta up">+3%</span></div>
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-copper"></span></div>
               <div class="chart-wrap"><canvas id="copper-1m"></canvas></div>
             </div>
           </div>
@@ -214,20 +216,20 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
               <p class="card-tag">Metal · Platinum Group</p>
               <h2 class="card-name">Platinum &amp; Palladium</h2>
               <p class="card-unit">USD / troy oz</p>
-              <div class="card-price">Pt $1,005</div>
-              <div class="card-change up">▲ 0.4% today</div>
+              <div class="card-price" id="px-pgm">—</div>
+              <div class="card-change" id="ch-pgm"></div>
               <div class="card-legend">
                 <span><i class="swatch" style="border-color:var(--gold)"></i> Platinum</span>
                 <span><i class="swatch dash" style="border-color:var(--ink-muted)"></i> Palladium</span>
               </div>
-              <p class="card-src">Source: LBMA</p>
+              <p class="card-src">Source: NYMEX · Yahoo Finance</p>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>5-Year</span><span class="delta">Pt +5% · Pd −58%</span></div>
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-pgm"></span></div>
               <div class="chart-wrap"><canvas id="pgm-5y"></canvas></div>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>1-Month</span><span class="delta up">+2%</span></div>
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-pgm"></span></div>
               <div class="chart-wrap"><canvas id="pgm-1m"></canvas></div>
             </div>
           </div>
@@ -240,17 +242,17 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
               <p class="card-tag">Metal · Battery</p>
               <h2 class="card-name">Lithium Carbonate</h2>
               <p class="card-unit">USD / tonne · battery grade</p>
-              <div class="card-price">$23,400</div>
-              <div class="card-change up">▲ 2.1% today</div>
+              <div class="card-price" id="px-lith">—</div>
+              <div class="card-change" id="ch-lith"></div>
               <p class="card-src">Source: Trading Economics (GFEX)</p>
               <p class="caveat">⚠ Daily, China-derived — proxy, not Western spot.</p>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>5-Year</span><span class="delta down">boom &amp; bust</span></div>
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-lith"></span></div>
               <div class="chart-wrap"><canvas id="lith-5y"></canvas></div>
             </div>
             <div class="chart-col">
-              <div class="chart-label"><span>1-Month</span><span class="delta up">+9%</span></div>
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-lith"></span></div>
               <div class="chart-wrap"><canvas id="lith-1m"></canvas></div>
             </div>
           </div>
@@ -264,8 +266,8 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
     <div class="container">
       <p class="label">How this works</p>
       <h2>From snapshot to signal</h2>
-      <p>Each indicator shows two windows side by side — a <strong>five-year</strong> arc for the structural story and a <strong>one-month</strong> close-up for the current move. A scheduled job is intended to pull each latest figure from a market data feed daily and append it, so the curves build a genuine history rather than showing a single moment.</p>
-      <p>The selection is deliberate: the <strong>EU-ETS carbon price</strong> is the cost Europe puts on emitting; <strong>copper</strong>, the <strong>platinum group metals</strong>, and <strong>lithium</strong> are the physical bottlenecks of electrification, clean hydrogen, and batteries; and <strong>Brent</strong> is the fossil benchmark the whole transition is racing to undercut. Lithium is the one soft spot — no clean free real-time feed exists, so it shows a daily China-derived proxy with that caveat noted on the card.</p>
+      <p>Each indicator shows two windows side by side — a <strong>five-year</strong> arc for the structural story and a <strong>one-month</strong> close-up for the current move. A scheduled job pulls each latest figure once a day, so the curves build a genuine history over time.</p>
+      <p>The selection is deliberate: the <strong>EU-ETS carbon price</strong> is the cost Europe puts on emitting; <strong>copper</strong>, the <strong>platinum group metals</strong>, and <strong>lithium</strong> are the physical bottlenecks of electrification, clean hydrogen, and batteries; and <strong>Brent</strong> is the fossil benchmark the whole transition is racing to undercut. Brent, copper, and the platinum group metals come from live market feeds; carbon and lithium are daily proxies with the caveats noted above.</p>
     </div>
   </section>
 
@@ -283,67 +285,67 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
   </footer>
 
   <script>
-  // ── Illustrative sample data (mockup only) ──
+  // ── chart defaults ──
+  Chart.defaults.font.family="'JetBrains Mono', monospace";
+  Chart.defaults.font.size=10;
+  Chart.defaults.color='#6e6458';
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var RED='#b5564e', GOLD='#b8922a', GREEN='#5b8a72', GREY='#6e6458', PURPLE='#7a5fb0';
+
+  // ── sample-data generators (fallback only) ──
   function series(start, vol, drift, n){
     var a=[start], v=start;
     for(var i=1;i<n;i++){ v += (Math.random()-0.5)*vol + drift; if(v<0)v=Math.abs(v); a.push(Math.round(v*100)/100); }
     return a;
   }
-  // boom-bust shape for lithium 5y
   function humped(base, peak, n){
     var a=[];
     for(var i=0;i<n;i++){
-      var x=i/(n-1);
-      var bell=Math.exp(-Math.pow((x-0.45)/0.16,2));
-      var v=base + (peak-base)*bell + (Math.random()-0.5)*base*0.12;
-      a.push(Math.round(v));
+      var x=i/(n-1), bell=Math.exp(-Math.pow((x-0.45)/0.16,2));
+      a.push(Math.round(base + (peak-base)*bell + (Math.random()-0.5)*base*0.12));
     }
     return a;
   }
-  var N5=60, N1=30;
-  var TODAY=new Date();
-  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function monthlyDates(n){ var t=new Date(), d=[]; for(var i=0;i<n;i++){ d.push(new Date(t.getFullYear(), t.getMonth()-(n-1-i), 1)); } return d; }
+  function dailyDates(n){ var t=new Date(), d=[]; for(var i=0;i<n;i++){ var x=new Date(t); x.setDate(t.getDate()-(n-1-i)); d.push(x); } return d; }
 
-  // 5-year: 60 monthly points; label each point with its year (shown only at year turns)
-  var D5=[], L5=[];
-  for(var i=0;i<N5;i++){
-    var d=new Date(TODAY.getFullYear(), TODAY.getMonth()-(N5-1-i), 1);
-    D5.push(d); L5.push(d.getFullYear());
+  function buildSample(){
+    var N5=60, N1=30, D5=monthlyDates(N5), D1=dailyDates(N1);
+    function s(h5v,h1v){ return {h5:{d:D5,v:h5v}, h1:{d:D1,v:h1v}}; }
+    return {
+      brent:   Object.assign({price:73.40, changePct:-1.2}, s(series(66,3,0.12,N5),   series(76,1.4,-0.12,N1))),
+      eua:     Object.assign({price:72.10, changePct:0.9},  s(series(32,2.2,0.7,N5),   series(68,1.2,0.13,N1))),
+      copper:  Object.assign({price:9540,  changePct:1.6},  s(series(6900,160,42,N5),  series(9270,80,9,N1))),
+      pgm: {price:1005, changePct:0.4,
+            pt:s(series(960,28,0.8,N5),  series(985,12,0.7,N1)),
+            pd:s(series(2400,55,-22,N5), series(1020,14,-0.3,N1))},
+      lithium: Object.assign({price:23400, changePct:2.1}, s(humped(14000,82000,N5),   series(21500,420,70,N1)))
+    };
   }
-  // 1-month: 30 daily points ending today
-  var D1=[], L1=[];
-  for(var j=0;j<N1;j++){
-    var dd=new Date(TODAY); dd.setDate(TODAY.getDate()-(N1-1-j));
-    D1.push(dd); L1.push(dd.getDate()+' '+MON[dd.getMonth()]);
-  }
 
-  Chart.defaults.font.family="'JetBrains Mono', monospace";
-  Chart.defaults.font.size=10;
-  Chart.defaults.color='#6e6458';
+  // ── rendering ──
+  function toDates(arr){ return arr.map(function(x){ return x instanceof Date ? x : new Date(x); }); }
+  function pct(v){ if(!v || v.length<2) return null; var a=v[0], b=v[v.length-1]; return a ? (b-a)/a*100 : null; }
+  function fmtPct(p){ if(p==null) return ''; return (p>=0?'+':'−')+Math.abs(p).toFixed(0)+'%'; }
+  function setDelta(id,p){ var e=document.getElementById(id); if(!e) return; e.textContent=fmtPct(p); e.className='delta '+(p>=0?'up':'down'); }
+  function money(cur,v,dec){ return cur + (dec ? Number(v).toFixed(dec) : Math.round(v).toLocaleString('en-US')); }
+  function setChange(id,p){ var e=document.getElementById(id); if(!e) return; var up=p>=0; e.textContent=(up?'▲ ':'▼ ')+Math.abs(p).toFixed(1)+'% today'; e.className='card-change '+(up?'up':'down'); }
 
-  function mk(id, labels, sets, xmode, dates){
-    var ctx=document.getElementById(id).getContext('2d');
+  function drawChart(id, dateArr, sets, xmode){
+    var el=document.getElementById(id); if(!el) return;
+    var ctx=el.getContext('2d');
+    var dates=toDates(dateArr);
+    var labels = xmode==='years' ? dates.map(function(d){return d.getFullYear();})
+                                 : dates.map(function(d){return d.getDate()+' '+MON[d.getMonth()];});
     var ds=sets.map(function(s){
       var grad=ctx.createLinearGradient(0,0,0,128);
-      grad.addColorStop(0, s.fill||'rgba(0,0,0,0)');
-      grad.addColorStop(1, 'rgba(255,255,255,0)');
-      return {data:s.data,borderColor:s.color,backgroundColor:s.fill?grad:'rgba(0,0,0,0)',
-        borderWidth:s.dash?1.5:2,borderDash:s.dash?[4,3]:[],fill:!!s.fill,tension:0.35,pointRadius:0,pointHoverRadius:4};
+      grad.addColorStop(0, s.fill||'rgba(0,0,0,0)'); grad.addColorStop(1,'rgba(255,255,255,0)');
+      return {data:s.v, borderColor:s.color, backgroundColor:s.fill?grad:'rgba(0,0,0,0)',
+        borderWidth:s.dash?1.5:2, borderDash:s.dash?[4,3]:[], fill:!!s.fill, tension:0.35, pointRadius:0, pointHoverRadius:4};
     });
-    var xticks;
-    if(xmode==='years'){
-      // show the label only at the first point of each calendar year
-      xticks={autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){
-        var d=dates[idx];
-        if(idx===0 || d.getMonth()===0) return d.getFullYear();
-        return '';
-      }};
-    } else { // 'range' — only first (30 days back) and last (today)
-      xticks={autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){
-        if(idx===0 || idx===labels.length-1) return labels[idx];
-        return '';
-      }};
-    }
+    var xticks = xmode==='years'
+      ? {autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){ var d=dates[idx]; return (idx===0||d.getMonth()===0)?d.getFullYear():''; }}
+      : {autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){ return (idx===0||idx===labels.length-1)?labels[idx]:''; }};
     new Chart(ctx,{type:'line',data:{labels:labels,datasets:ds},
       options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false},tooltip:{enabled:true,backgroundColor:'#1c1916',titleColor:'#f0ebe2',bodyColor:'#c8bfb0',displayColors:false,padding:8}},
@@ -351,29 +353,76 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
         interaction:{intersect:false,mode:'index'}}});
   }
 
-  var RED='#b5564e', GOLD='#b8922a', GREEN='#5b8a72', GREY='#6e6458';
+  function renderSimple(stem, ind, cur, dec, color, fill){
+    document.getElementById('px-'+stem).textContent = money(cur, ind.price, dec);
+    setChange('ch-'+stem, ind.changePct||0);
+    drawChart(stem+'-5y', ind.h5.d, [{v:ind.h5.v,color:color,fill:fill}], 'years');
+    drawChart(stem+'-1m', ind.h1.d, [{v:ind.h1.v,color:color,fill:fill}], 'range');
+    setDelta('d5-'+stem, pct(ind.h5.v));
+    setDelta('d1-'+stem, pct(ind.h1.v));
+  }
 
-  // Brent
-  mk('brent-5y', L5, [{data:series(66,3,0.12,N5),color:RED,fill:'rgba(181,86,78,0.16)'}], 'years', D5);
-  mk('brent-1m', L1, [{data:series(76,1.4,-0.12,N1),color:RED,fill:'rgba(181,86,78,0.16)'}], 'range', D1);
-  // EUA
-  mk('eua-5y',  L5, [{data:series(32,2.2,0.7,N5),color:GOLD,fill:'rgba(184,146,42,0.18)'}], 'years', D5);
-  mk('eua-1m',  L1, [{data:series(68,1.2,0.13,N1),color:GOLD,fill:'rgba(184,146,42,0.18)'}], 'range', D1);
-  // Copper
-  mk('copper-5y', L5, [{data:series(6900,160,42,N5),color:GREEN,fill:'rgba(91,138,114,0.16)'}], 'years', D5);
-  mk('copper-1m', L1, [{data:series(9270,80,9,N1),color:GREEN,fill:'rgba(91,138,114,0.16)'}], 'range', D1);
-  // PGM — two lines (Pt solid gold, Pd dashed grey)
-  mk('pgm-5y', L5, [
-    {data:series(960,28,0.8,N5),color:GOLD,fill:'rgba(184,146,42,0.14)'},
-    {data:series(2400,55,-22,N5),color:GREY,dash:true}
-  ], 'years', D5);
-  mk('pgm-1m', L1, [
-    {data:series(985,12,0.7,N1),color:GOLD,fill:'rgba(184,146,42,0.14)'},
-    {data:series(1020,14,-0.3,N1),color:GREY,dash:true}
-  ], 'range', D1);
-  // Lithium — boom & bust 5y, recent recovery 1m
-  mk('lith-5y', L5, [{data:humped(14000,82000,N5),color:'#7a5fb0',fill:'rgba(122,95,176,0.16)'}], 'years', D5);
-  mk('lith-1m', L1, [{data:series(21500,420,70,N1),color:'#7a5fb0',fill:'rgba(122,95,176,0.16)'}], 'range', D1);
+  function renderPGM(ind){
+    document.getElementById('px-pgm').textContent = 'Pt ' + money('$', ind.price, 0);
+    setChange('ch-pgm', ind.changePct||0);
+    drawChart('pgm-5y', ind.pt.h5.d, [
+      {v:ind.pt.h5.v,color:GOLD,fill:'rgba(184,146,42,0.14)'},
+      {v:ind.pd.h5.v,color:GREY,dash:true}
+    ], 'years');
+    drawChart('pgm-1m', ind.pt.h1.d, [
+      {v:ind.pt.h1.v,color:GOLD,fill:'rgba(184,146,42,0.14)'},
+      {v:ind.pd.h1.v,color:GREY,dash:true}
+    ], 'range');
+    setDelta('d5-pgm', pct(ind.pt.h5.v));
+    setDelta('d1-pgm', pct(ind.pt.h1.v));
+  }
+
+  function merge(real, sample, key){
+    var r=(real && real[key]) || {};
+    var m=Object.assign({}, sample[key], r);
+    if(!r.h5){ m.h5=sample[key].h5; m.h1=sample[key].h1; }      // keep sample history if feed has none
+    if(key==='pgm'){
+      m.pt=(r.pt && r.pt.h5)? r.pt : sample.pgm.pt;
+      m.pd=(r.pd && r.pd.h5)? r.pd : sample.pgm.pd;
+      if(r.price==null) m.price=sample.pgm.price;
+    }
+    m._real = (r.price!=null);
+    return m;
+  }
+
+  function render(real, updated){
+    var sample=buildSample();
+    var brent=merge(real,sample,'brent'),
+        eua=merge(real,sample,'eua'),
+        copper=merge(real,sample,'copper'),
+        pgm=merge(real,sample,'pgm'),
+        lithium=merge(real,sample,'lithium');
+
+    renderSimple('brent', brent, '$', 2, RED,    'rgba(181,86,78,0.16)');
+    renderSimple('eua',   eua,   '€', 2, GOLD,   'rgba(184,146,42,0.18)');
+    renderSimple('copper',copper,'$', 0, GREEN,  'rgba(91,138,114,0.16)');
+    renderPGM(pgm);
+    renderSimple('lith', lithium,'$', 0, PURPLE,'rgba(122,95,176,0.16)');
+
+    var anyReal = brent._real||eua._real||copper._real||pgm._real;
+    var banner=document.getElementById('banner'), txt=document.getElementById('banner-text');
+    if(anyReal){
+      banner.className='demo-banner live';
+      var when = updated ? new Date(updated).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'today';
+      txt.innerHTML='<strong>Live data</strong> — updated '+when+'. Brent, copper &amp; platinum group from market feeds; carbon &amp; lithium are daily proxies.';
+    } else {
+      banner.className='demo-banner';
+      txt.innerHTML='<strong>Mockup preview</strong> — illustrative sample data, not live quotes. The daily price job has not run yet.';
+    }
+  }
+
+  // ── load data.json, fall back to sample ──
+  (function(){
+    fetch('./data.json', {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ render(j && j.indicators ? j.indicators : null, j && j.updated); })
+      .catch(function(){ render(null, null); });
+  })();
   </script>
 
 </body>
