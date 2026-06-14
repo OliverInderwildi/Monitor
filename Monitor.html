@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitor — Energy Transition Market Values | Dr. Oliver Inderwildi</title>
+  <meta name="description" content="A live monitor of market values critical to the energy transition: Brent crude, the EU-ETS carbon price, copper, platinum group metals, and lithium." />
+  <link rel="canonical" href="https://oliverinderwildi.github.io/Monitor/" />
+  <link rel="icon" href="/favicon.ico" />
+
+  <!-- ── Google Fonts ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+  <style>
+:root {--ink:#1a1714;--ink-soft:#3d3830;--ink-muted:#6e6458;--ink-faint:#b0a898;--paper:#f9f6f1;--paper-warm:#f3ede3;--paper-deep:#e8ddf0;--rule:#d4c9b8;--gold:#b8922a;--gold-pale:#fdf6e3;--charcoal:#100e0c;--charcoal-mid:#1c1916;--charcoal-rim:#2a2520;--cream:#f0ebe2;--cream-dim:#c8bfb0;--up:#5b8a72;--down:#b5564e;}
+*,*::before,*::after {box-sizing:border-box;margin:0;padding:0;}
+html {scroll-behavior:smooth;}
+body {font-family:'Source Serif 4',Georgia,serif;background:var(--paper);color:var(--ink);line-height:1.7;font-size:18px;-webkit-font-smoothing:antialiased;}
+h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-height:1.15;}
+.container {max-width:1200px;margin:0 auto;padding:0 2rem;}
+
+/* ── Nav (matches index.html) ── */
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(16,14,12,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(200,191,176,0.12);}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.nav-left,.nav-right{display:flex;align-items:center;gap:0.25rem;}
+.nav-center{position:absolute;left:50%;transform:translateX(-50%);}
+.nav-center a{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--cream);text-decoration:none;letter-spacing:0.02em;}
+.nav-center a:hover{color:var(--gold);}
+.nav-link{font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--cream-dim);text-decoration:none;padding:0.5rem 0.85rem;border-radius:6px;transition:all .2s ease;}
+.nav-link:hover{color:var(--cream);background:rgba(184,146,42,0.12);}
+.nav-link.library{color:#5b8a72;border:1px solid #3d6b52;background:rgba(91,138,114,0.08);}
+.nav-link.library:hover{background:rgba(91,138,114,0.18);color:#7dc4a0;}
+.nav-link.monitor{color:var(--gold);border:1px solid rgba(184,146,42,0.4);background:rgba(184,146,42,0.1);}
+.nav-link.monitor:hover{background:rgba(184,146,42,0.2);color:#d9b347;}
+
+/* ── Page header ── */
+.monitor-hero{background:var(--charcoal);padding:9rem 0 3.5rem;border-bottom:3px solid var(--gold);}
+.monitor-eyebrow{font-family:'JetBrains Mono',monospace;font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;}
+.monitor-eyebrow::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 0 rgba(91,138,114,0.6);animation:pulse 2.2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(91,138,114,0.6);}70%{box-shadow:0 0 0 8px rgba(91,138,114,0);}100%{box-shadow:0 0 0 0 rgba(91,138,114,0);}}
+.monitor-hero h1{font-size:clamp(2.2rem,5vw,3.4rem);color:var(--cream);margin-bottom:1rem;}
+.monitor-hero p{font-size:1.05rem;font-weight:300;color:var(--cream-dim);max-width:640px;line-height:1.75;font-style:italic;border-left:2px solid var(--gold);padding-left:1.25rem;}
+.monitor-meta{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,191,176,0.45);margin-top:1.75rem;}
+
+/* ── Demo banner ── */
+.demo-banner{background:var(--gold-pale);border-bottom:1px solid var(--rule);}
+.demo-banner .container{padding-top:0.85rem;padding-bottom:0.85rem;}
+.demo-banner p{font-family:'JetBrains Mono',monospace;font-size:0.68rem;letter-spacing:0.08em;color:var(--ink-soft);text-transform:uppercase;}
+.demo-banner strong{color:var(--gold);}
+
+/* ── Cards (one per row, dual chart) ── */
+.monitor-grid{padding:3rem 0 4.5rem;}
+.cards{display:flex;flex-direction:column;gap:1.5rem;}
+.card{background:var(--paper);border:1px solid var(--rule);padding:1.75rem;position:relative;overflow:hidden;transition:box-shadow .25s,transform .25s;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;}
+.card:hover{box-shadow:0 12px 36px rgba(26,23,20,0.1);transform:translateY(-2px);}
+.card:hover::before{transform:scaleX(1);}
+.card-grid{display:grid;grid-template-columns:minmax(180px,0.85fr) 1fr 1fr;gap:1.75rem;align-items:stretch;}
+
+.card-info{display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--rule);padding-right:1.5rem;}
+.card-tag{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.5rem;}
+.card-name{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1.15;}
+.card-unit{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:0.4rem;}
+.card-price{font-family:'Playfair Display',serif;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;margin-top:1.1rem;}
+.card-change{font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:500;letter-spacing:0.04em;margin-top:0.45rem;display:inline-flex;align-items:center;gap:0.3rem;}
+.card-legend{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.06em;color:var(--ink-muted);margin-top:0.9rem;display:flex;flex-direction:column;gap:0.25rem;}
+.card-legend span{display:inline-flex;align-items:center;gap:0.4rem;}
+.swatch{width:14px;height:0;border-top:2px solid;display:inline-block;}
+.swatch.dash{border-top-style:dashed;}
+.card-src{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);margin-top:0.9rem;}
+.up{color:var(--up);}
+.down{color:var(--down);}
+
+.chart-col{display:flex;flex-direction:column;}
+.chart-label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:0.5rem;display:flex;justify-content:space-between;}
+.chart-label .delta{color:var(--ink-faint);}
+.chart-wrap{position:relative;height:128px;flex:1;}
+
+.caveat{margin-top:0.9rem;font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.04em;color:var(--down);}
+
+/* ── Note section ── */
+.note-section{background:var(--paper-warm);padding:3.5rem 0;border-top:1px solid var(--rule);}
+.note-section h2{font-size:1.6rem;color:var(--ink);margin-bottom:1.25rem;}
+.note-section p{font-size:1rem;color:var(--ink-soft);max-width:760px;margin-bottom:1rem;}
+.note-section .label{font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;}
+
+/* ── Footer ── */
+.site-footer{background:var(--charcoal);border-top:1px solid rgba(255,255,255,0.05);padding:2.5rem 0;}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;color:rgba(200,191,176,0.35);}
+.footer-links{display:flex;gap:1.5rem;list-style:none;}
+.footer-links a{font-family:'JetBrains Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,191,176,0.35);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:rgba(200,191,176,0.7);}
+
+@media (max-width:820px){
+  .card-grid{grid-template-columns:1fr;gap:1.25rem;}
+  .card-info{border-right:none;border-bottom:1px solid var(--rule);padding-right:0;padding-bottom:1.25rem;}
+  .nav-left,.nav-right{display:none;}.nav-inner{justify-content:center;}.nav-center{position:static;transform:none;}
+}
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/GoogleScholar/" class="nav-link library">Library</a>
+        <a href="/Monitor/" class="nav-link monitor active">Monitor</a>
+      </div>
+      <div class="nav-center">
+        <a href="/">Dr Oliver Inderwildi</a>
+      </div>
+      <div class="nav-right">
+        <a href="/#series" class="nav-link">Articles</a>
+        <a href="/#books" class="nav-link">Books</a>
+        <a href="/#presence" class="nav-link">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="monitor-hero">
+    <div class="container">
+      <p class="monitor-eyebrow">Live Market Monitor</p>
+      <h1>Markets of the Transition</h1>
+      <p>The prices that move the energy transition — the cost of carbon, the metals of electrification, and the fossil benchmark they are measured against.</p>
+      <p class="monitor-meta">Brent · EU-ETS carbon · Copper · Platinum group · Lithium &nbsp;|&nbsp; 5-year &amp; 1-month views</p>
+    </div>
+  </header>
+
+  <div class="demo-banner">
+    <div class="container">
+      <p><strong>Mockup preview</strong> — figures and curves below are illustrative sample data, not live quotes. Real feeds wire in next.</p>
+    </div>
+  </div>
+
+  <main class="monitor-grid">
+    <div class="container">
+      <div class="cards">
+
+        <!-- BRENT -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Energy · Fossil Benchmark</p>
+              <h2 class="card-name">Brent Crude</h2>
+              <p class="card-unit">USD / barrel</p>
+              <div class="card-price">$73.40</div>
+              <div class="card-change down">▼ 1.2% today</div>
+              <p class="card-src">Source: ICE / EIA</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta">+12%</span></div>
+              <div class="chart-wrap"><canvas id="brent-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta down">−4%</span></div>
+              <div class="chart-wrap"><canvas id="brent-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- EUA -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Carbon · EU-ETS</p>
+              <h2 class="card-name">EUA Carbon Price</h2>
+              <p class="card-unit">EUR / tCO₂e</p>
+              <div class="card-price">€72.10</div>
+              <div class="card-change up">▲ 0.9% today</div>
+              <p class="card-src">Source: Ember / EEX</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta up">+128%</span></div>
+              <div class="chart-wrap"><canvas id="eua-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta up">+6%</span></div>
+              <div class="chart-wrap"><canvas id="eua-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- COPPER -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Metal · Electrification</p>
+              <h2 class="card-name">Copper</h2>
+              <p class="card-unit">USD / tonne</p>
+              <div class="card-price">$9,540</div>
+              <div class="card-change up">▲ 1.6% today</div>
+              <p class="card-src">Source: LME</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta up">+38%</span></div>
+              <div class="chart-wrap"><canvas id="copper-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta up">+3%</span></div>
+              <div class="chart-wrap"><canvas id="copper-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- PGM -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Metal · Platinum Group</p>
+              <h2 class="card-name">Platinum &amp; Palladium</h2>
+              <p class="card-unit">USD / troy oz</p>
+              <div class="card-price">Pt $1,005</div>
+              <div class="card-change up">▲ 0.4% today</div>
+              <div class="card-legend">
+                <span><i class="swatch" style="border-color:var(--gold)"></i> Platinum</span>
+                <span><i class="swatch dash" style="border-color:var(--ink-muted)"></i> Palladium</span>
+              </div>
+              <p class="card-src">Source: LBMA</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta">Pt +5% · Pd −58%</span></div>
+              <div class="chart-wrap"><canvas id="pgm-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta up">+2%</span></div>
+              <div class="chart-wrap"><canvas id="pgm-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- LITHIUM -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Metal · Battery</p>
+              <h2 class="card-name">Lithium Carbonate</h2>
+              <p class="card-unit">USD / tonne · battery grade</p>
+              <div class="card-price">$23,400</div>
+              <div class="card-change up">▲ 2.1% today</div>
+              <p class="card-src">Source: Trading Economics (GFEX)</p>
+              <p class="caveat">⚠ Daily, China-derived — proxy, not Western spot.</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta down">boom &amp; bust</span></div>
+              <div class="chart-wrap"><canvas id="lith-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta up">+9%</span></div>
+              <div class="chart-wrap"><canvas id="lith-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <section class="note-section">
+    <div class="container">
+      <p class="label">How this works</p>
+      <h2>From snapshot to signal</h2>
+      <p>Each indicator shows two windows side by side — a <strong>five-year</strong> arc for the structural story and a <strong>one-month</strong> close-up for the current move. A scheduled job is intended to pull each latest figure from a market data feed daily and append it, so the curves build a genuine history rather than showing a single moment.</p>
+      <p>The selection is deliberate: the <strong>EU-ETS carbon price</strong> is the cost Europe puts on emitting; <strong>copper</strong>, the <strong>platinum group metals</strong>, and <strong>lithium</strong> are the physical bottlenecks of electrification, clean hydrogen, and batteries; and <strong>Brent</strong> is the fossil benchmark the whole transition is racing to undercut. Lithium is the one soft spot — no clean free real-time feed exists, so it shows a daily China-derived proxy with that caveat noted on the card.</p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <p class="footer-copy">&copy; 2026 Dr. Oliver Inderwildi · University of Cambridge</p>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/GoogleScholar/">Library</a></li>
+          <li><a href="https://www.linkedin.com/in/oliverinderwildi/" target="_blank" rel="noopener me">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // ── Illustrative sample data (mockup only) ──
+  function series(start, vol, drift, n){
+    var a=[start], v=start;
+    for(var i=1;i<n;i++){ v += (Math.random()-0.5)*vol + drift; if(v<0)v=Math.abs(v); a.push(Math.round(v*100)/100); }
+    return a;
+  }
+  // boom-bust shape for lithium 5y
+  function humped(base, peak, n){
+    var a=[];
+    for(var i=0;i<n;i++){
+      var x=i/(n-1);
+      var bell=Math.exp(-Math.pow((x-0.45)/0.16,2));
+      var v=base + (peak-base)*bell + (Math.random()-0.5)*base*0.12;
+      a.push(Math.round(v));
+    }
+    return a;
+  }
+  var N5=60, N1=30;
+  var TODAY=new Date();
+  var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // 5-year: 60 monthly points; label each point with its year (shown only at year turns)
+  var D5=[], L5=[];
+  for(var i=0;i<N5;i++){
+    var d=new Date(TODAY.getFullYear(), TODAY.getMonth()-(N5-1-i), 1);
+    D5.push(d); L5.push(d.getFullYear());
+  }
+  // 1-month: 30 daily points ending today
+  var D1=[], L1=[];
+  for(var j=0;j<N1;j++){
+    var dd=new Date(TODAY); dd.setDate(TODAY.getDate()-(N1-1-j));
+    D1.push(dd); L1.push(dd.getDate()+' '+MON[dd.getMonth()]);
+  }
+
+  Chart.defaults.font.family="'JetBrains Mono', monospace";
+  Chart.defaults.font.size=10;
+  Chart.defaults.color='#6e6458';
+
+  function mk(id, labels, sets, xmode, dates){
+    var ctx=document.getElementById(id).getContext('2d');
+    var ds=sets.map(function(s){
+      var grad=ctx.createLinearGradient(0,0,0,128);
+      grad.addColorStop(0, s.fill||'rgba(0,0,0,0)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      return {data:s.data,borderColor:s.color,backgroundColor:s.fill?grad:'rgba(0,0,0,0)',
+        borderWidth:s.dash?1.5:2,borderDash:s.dash?[4,3]:[],fill:!!s.fill,tension:0.35,pointRadius:0,pointHoverRadius:4};
+    });
+    var xticks;
+    if(xmode==='years'){
+      // show the label only at the first point of each calendar year
+      xticks={autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){
+        var d=dates[idx];
+        if(idx===0 || d.getMonth()===0) return d.getFullYear();
+        return '';
+      }};
+    } else { // 'range' — only first (30 days back) and last (today)
+      xticks={autoSkip:false,maxRotation:0,padding:4,callback:function(val,idx){
+        if(idx===0 || idx===labels.length-1) return labels[idx];
+        return '';
+      }};
+    }
+    new Chart(ctx,{type:'line',data:{labels:labels,datasets:ds},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{enabled:true,backgroundColor:'#1c1916',titleColor:'#f0ebe2',bodyColor:'#c8bfb0',displayColors:false,padding:8}},
+        scales:{x:{display:true,grid:{display:false},ticks:xticks},y:{display:true,position:'right',grid:{color:'rgba(212,201,184,0.35)'},ticks:{maxTicksLimit:4,padding:6}}},
+        interaction:{intersect:false,mode:'index'}}});
+  }
+
+  var RED='#b5564e', GOLD='#b8922a', GREEN='#5b8a72', GREY='#6e6458';
+
+  // Brent
+  mk('brent-5y', L5, [{data:series(66,3,0.12,N5),color:RED,fill:'rgba(181,86,78,0.16)'}], 'years', D5);
+  mk('brent-1m', L1, [{data:series(76,1.4,-0.12,N1),color:RED,fill:'rgba(181,86,78,0.16)'}], 'range', D1);
+  // EUA
+  mk('eua-5y',  L5, [{data:series(32,2.2,0.7,N5),color:GOLD,fill:'rgba(184,146,42,0.18)'}], 'years', D5);
+  mk('eua-1m',  L1, [{data:series(68,1.2,0.13,N1),color:GOLD,fill:'rgba(184,146,42,0.18)'}], 'range', D1);
+  // Copper
+  mk('copper-5y', L5, [{data:series(6900,160,42,N5),color:GREEN,fill:'rgba(91,138,114,0.16)'}], 'years', D5);
+  mk('copper-1m', L1, [{data:series(9270,80,9,N1),color:GREEN,fill:'rgba(91,138,114,0.16)'}], 'range', D1);
+  // PGM — two lines (Pt solid gold, Pd dashed grey)
+  mk('pgm-5y', L5, [
+    {data:series(960,28,0.8,N5),color:GOLD,fill:'rgba(184,146,42,0.14)'},
+    {data:series(2400,55,-22,N5),color:GREY,dash:true}
+  ], 'years', D5);
+  mk('pgm-1m', L1, [
+    {data:series(985,12,0.7,N1),color:GOLD,fill:'rgba(184,146,42,0.14)'},
+    {data:series(1020,14,-0.3,N1),color:GREY,dash:true}
+  ], 'range', D1);
+  // Lithium — boom & bust 5y, recent recovery 1m
+  mk('lith-5y', L5, [{data:humped(14000,82000,N5),color:'#7a5fb0',fill:'rgba(122,95,176,0.16)'}], 'years', D5);
+  mk('lith-1m', L1, [{data:series(21500,420,70,N1),color:'#7a5fb0',fill:'rgba(122,95,176,0.16)'}], 'range', D1);
+  </script>
+
+</body>
+</html>
