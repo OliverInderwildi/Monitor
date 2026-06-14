@@ -45,7 +45,7 @@ async function fromYahoo(symbol, transform = (x) => x, round = 2) {
   // day-over-day change from the last two daily closes (already transformed)
   const a = h1.v[h1.v.length - 2], b = h1.v[h1.v.length - 1];
   const changePct = (a != null && a !== 0) ? +(((b - a) / a) * 100).toFixed(2) : 0;
-  return { price, changePct, h5, h1 };
+  return { price, changePct, asOf: h1.d[h1.d.length - 1] || null, h5, h1 };
 }
 
 // Attempt Ember's free carbon-price API; return null on any failure.
@@ -69,7 +69,7 @@ async function fromEmber() {
   const h1 = { d: d.slice(-30), v: v.slice(-30) };
   const price = v[v.length - 1];
   const prev = v[v.length - 2] ?? price;
-  return { price, changePct: prev ? +(((price - prev) / prev) * 100).toFixed(2) : 0, h5, h1 };
+  return { price, changePct: prev ? +(((price - prev) / prev) * 100).toFixed(2) : 0, asOf: d[d.length - 1] || null, h5, h1 };
 }
 
 async function loadJSON(path, fallback) {
@@ -106,18 +106,19 @@ try {
   indicators.eua = { ...(indicators.eua || {}), ...(await fromEmber()) };
   console.log(`ok   EUA (Ember): ${indicators.eua.price}`);
 } catch (e) {
-  indicators.eua = { ...(indicators.eua || {}), price: manual.eua.price, changePct: manual.eua.changePct, manual: true };
-  console.warn(`FAIL EUA Ember: ${e.message} -> using manual.json (${manual.eua.price})`);
+  indicators.eua = { ...(indicators.eua || {}), price: manual.eua.price, changePct: 0, asOf: manual.eua.asOf || null, manual: true };
+  console.warn(`FAIL EUA Ember: ${e.message} -> using manual.json (${manual.eua.price} as of ${manual.eua.asOf})`);
 }
 
 // Lithium: no free real-time feed — manual.json
-indicators.lithium = { price: manual.lithium.price, changePct: manual.lithium.changePct ?? 0, manual: true };
+indicators.lithium = { price: manual.lithium.price, changePct: 0, asOf: manual.lithium.asOf || null, manual: true };
 
 // Combine platinum + palladium into the single "pgm" card the page expects
 if (indicators.pt || indicators.pd) {
   indicators.pgm = {
     price: indicators.pt?.price ?? null,
     changePct: indicators.pt?.changePct ?? 0,
+    asOf: indicators.pt?.asOf ?? null,
     pt: indicators.pt ? { h5: indicators.pt.h5, h1: indicators.pt.h1 } : null,
     pd: indicators.pd ? { h5: indicators.pd.h5, h1: indicators.pd.h1 } : null,
   };

@@ -310,13 +310,13 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
   function dailyDates(n){ var t=new Date(), d=[]; for(var i=0;i<n;i++){ var x=new Date(t); x.setDate(t.getDate()-(n-1-i)); d.push(x); } return d; }
 
   function buildSample(){
-    var N5=60, N1=30, D5=monthlyDates(N5), D1=dailyDates(N1);
-    function s(h5v,h1v){ return {h5:{d:D5,v:h5v}, h1:{d:D1,v:h1v}}; }
+    var N5=60, N1=30, D5=monthlyDates(N5), D1=dailyDates(N1), lastDay=D1[N1-1];
+    function s(h5v,h1v){ return {asOf:lastDay, h5:{d:D5,v:h5v}, h1:{d:D1,v:h1v}}; }
     return {
       brent:   Object.assign({price:73.40, changePct:-1.2}, s(series(66,3,0.12,N5),   series(76,1.4,-0.12,N1))),
       eua:     Object.assign({price:72.10, changePct:0.9},  s(series(32,2.2,0.7,N5),   series(68,1.2,0.13,N1))),
       copper:  Object.assign({price:9540,  changePct:1.6},  s(series(6900,160,42,N5),  series(9270,80,9,N1))),
-      pgm: {price:1005, changePct:0.4,
+      pgm: {price:1005, changePct:0.4, asOf:lastDay,
             pt:s(series(960,28,0.8,N5),  series(985,12,0.7,N1)),
             pd:s(series(2400,55,-22,N5), series(1020,14,-0.3,N1))},
       lithium: Object.assign({price:23400, changePct:2.1}, s(humped(14000,82000,N5),   series(21500,420,70,N1)))
@@ -329,7 +329,16 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
   function fmtPct(p){ if(p==null) return ''; return (p>=0?'+':'−')+Math.abs(p).toFixed(0)+'%'; }
   function setDelta(id,p){ var e=document.getElementById(id); if(!e) return; e.textContent=fmtPct(p); e.className='delta '+(p>=0?'up':'down'); }
   function money(cur,v,dec){ return cur + (dec ? Number(v).toFixed(dec) : Math.round(v).toLocaleString('en-US')); }
-  function setChange(id,p){ var e=document.getElementById(id); if(!e) return; var up=p>=0; e.textContent=(up?'▲ ':'▼ ')+Math.abs(p).toFixed(1)+'% today'; e.className='card-change '+(up?'up':'down'); }
+  function fmtDate(s){ if(!s) return ''; var d=(s instanceof Date)?s:new Date(s); return isNaN(d)?'':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'}); }
+  function setChange(id,ind){
+    var e=document.getElementById(id); if(!e) return;
+    var d=fmtDate(ind.asOf);
+    if(ind.manual){ e.textContent = d ? ('as of '+d) : 'manual value'; e.className='card-change'; e.style.color='var(--ink-muted)'; return; }
+    var p=ind.changePct||0, up=p>=0;
+    e.style.color='';
+    e.textContent=(up?'▲ ':'▼ ')+Math.abs(p).toFixed(1)+'%'+(d?(' · '+d):'');
+    e.className='card-change '+(up?'up':'down');
+  }
 
   function drawChart(id, dateArr, sets, xmode){
     var el=document.getElementById(id); if(!el) return;
@@ -355,7 +364,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
 
   function renderSimple(stem, ind, cur, dec, color, fill){
     document.getElementById('px-'+stem).textContent = money(cur, ind.price, dec);
-    setChange('ch-'+stem, ind.changePct||0);
+    setChange('ch-'+stem, ind);
     drawChart(stem+'-5y', ind.h5.d, [{v:ind.h5.v,color:color,fill:fill}], 'years');
     drawChart(stem+'-1m', ind.h1.d, [{v:ind.h1.v,color:color,fill:fill}], 'range');
     setDelta('d5-'+stem, pct(ind.h5.v));
@@ -364,7 +373,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
 
   function renderPGM(ind){
     document.getElementById('px-pgm').textContent = 'Pt ' + money('$', ind.price, 0);
-    setChange('ch-pgm', ind.changePct||0);
+    setChange('ch-pgm', ind);
     drawChart('pgm-5y', ind.pt.h5.d, [
       {v:ind.pt.h5.v,color:GOLD,fill:'rgba(184,146,42,0.14)'},
       {v:ind.pd.h5.v,color:GREY,dash:true}
@@ -408,8 +417,8 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
     var banner=document.getElementById('banner'), txt=document.getElementById('banner-text');
     if(anyReal){
       banner.className='demo-banner live';
-      var when = updated ? new Date(updated).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'today';
-      txt.innerHTML='<strong>Live data</strong> — updated '+when+'. Brent, copper &amp; platinum group from market feeds; carbon &amp; lithium are daily proxies.';
+      var when = updated ? new Date(updated).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : 'recently';
+      txt.innerHTML='<strong>Live data</strong> — each value carries its own as-of date (markets don’t trade weekends); carbon &amp; lithium are manual snapshots. Last checked '+when+'.';
     } else {
       banner.className='demo-banner';
       txt.innerHTML='<strong>Mockup preview</strong> — illustrative sample data, not live quotes. The daily price job has not run yet.';
