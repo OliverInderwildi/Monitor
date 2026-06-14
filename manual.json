@@ -1,0 +1,5 @@
+{
+  "_comment": "Values with no free real-time feed. Edit the numbers when you want to refresh them; the daily job copies them into data.json. EUA is auto-updated from Ember when that source is reachable and only falls back to this value otherwise.",
+  "eua": { "price": 72.0, "changePct": 0 },
+  "lithium": { "price": 24500, "changePct": 0 }
+}
