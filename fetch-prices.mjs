@@ -42,8 +42,9 @@ async function fromYahoo(symbol, transform = (x) => x, round = 2) {
   const h1 = { d: one.d, v: tx(one.v) };
   const lastClose = one.v[one.v.length - 1];
   const price = +(transform(one.meta.regularMarketPrice ?? lastClose)).toFixed(round);
-  const prev = transform(one.meta.chartPreviousClose ?? one.v[one.v.length - 2] ?? lastClose);
-  const changePct = prev ? +(((price - prev) / prev) * 100).toFixed(2) : 0;
+  // day-over-day change from the last two daily closes (already transformed)
+  const a = h1.v[h1.v.length - 2], b = h1.v[h1.v.length - 1];
+  const changePct = (a != null && a !== 0) ? +(((b - a) / a) * 100).toFixed(2) : 0;
   return { price, changePct, h5, h1 };
 }
 
@@ -96,7 +97,7 @@ async function set(key, fn, label) {
 }
 
 await set('brent',  () => fromYahoo('BZ=F', (x) => x, 2), 'Brent (BZ=F)');
-await set('copper', () => fromYahoo('HG=F', (x) => x * (LB_PER_TONNE / 100), 0), 'Copper (HG=F→USD/t)');
+await set('copper', () => fromYahoo('HG=F', (x) => x * LB_PER_TONNE, 0), 'Copper (HG=F→USD/t, $/lb→$/t)');
 await set('pt',     () => fromYahoo('PL=F', (x) => x, 0), 'Platinum (PL=F)');
 await set('pd',     () => fromYahoo('PA=F', (x) => x, 0), 'Palladium (PA=F)');
 
