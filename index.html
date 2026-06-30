@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Monitor — Energy Transition Market Values | Dr. Oliver Inderwildi</title>
-  <meta name="description" content="A live monitor of market values critical to the energy transition: Brent crude, the EU-ETS carbon price, copper, platinum group metals, and lithium." />
+  <meta name="description" content="A live monitor of market values critical to the energy transition: Brent crude, the EU-ETS carbon price, copper, platinum group metals, lithium, and cobalt." />
   <link rel="canonical" href="https://oliverinderwildi.github.io/Monitor/" />
   <link rel="icon" href="/favicon.ico" />
 
@@ -36,6 +36,8 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
 .nav-link.library:hover{background:rgba(91,138,114,0.18);color:#7dc4a0;}
 .nav-link.monitor{color:var(--gold);border:1px solid rgba(184,146,42,0.4);background:rgba(184,146,42,0.1);}
 .nav-link.monitor:hover{background:rgba(184,146,42,0.2);color:#d9b347;}
+.nav-link.infographics{color:#8a7bc8;border:1px solid rgba(138,123,200,0.4);background:rgba(138,123,200,0.1);}
+.nav-link.infographics:hover{background:rgba(138,123,200,0.2);color:#a899e0;}
 
 /* ── Page header ── */
 .monitor-hero{background:var(--charcoal);padding:9rem 0 3.5rem;border-bottom:3px solid var(--gold);}
@@ -112,6 +114,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
       <div class="nav-left">
         <a href="/GoogleScholar/" class="nav-link library">Library</a>
         <a href="/Monitor/" class="nav-link monitor active">Monitor</a>
+        <a href="/Infographics/" class="nav-link infographics">Infographics</a>
       </div>
       <div class="nav-center">
         <a href="/">Dr Oliver Inderwildi</a>
@@ -129,7 +132,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
       <p class="monitor-eyebrow">Live Market Monitor</p>
       <h1>Markets of the Transition</h1>
       <p>The prices that move the energy transition — the cost of carbon, the metals of electrification, and the fossil benchmark they are measured against.</p>
-      <p class="monitor-meta">Brent · EU-ETS carbon · Copper · Platinum group · Lithium &nbsp;|&nbsp; 5-year &amp; 1-month views</p>
+      <p class="monitor-meta">Brent · EU-ETS carbon · Copper · Platinum group · Lithium · Cobalt &nbsp;|&nbsp; 5-year &amp; 1-month views</p>
     </div>
   </header>
 
@@ -258,6 +261,29 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
           </div>
         </article>
 
+        <!-- COBALT -->
+        <article class="card">
+          <div class="card-grid">
+            <div class="card-info">
+              <p class="card-tag">Metal · Battery</p>
+              <h2 class="card-name">Cobalt</h2>
+              <p class="card-unit">USD / tonne</p>
+              <div class="card-price" id="px-cobalt">—</div>
+              <div class="card-change" id="ch-cobalt"></div>
+              <p class="card-src">Source: LME · manual snapshot</p>
+              <p class="caveat">⚠ No free spot feed — manual value; chart illustrative.</p>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>5-Year</span><span class="delta" id="d5-cobalt"></span></div>
+              <div class="chart-wrap"><canvas id="cobalt-5y"></canvas></div>
+            </div>
+            <div class="chart-col">
+              <div class="chart-label"><span>1-Month</span><span class="delta" id="d1-cobalt"></span></div>
+              <div class="chart-wrap"><canvas id="cobalt-1m"></canvas></div>
+            </div>
+          </div>
+        </article>
+
       </div>
     </div>
   </main>
@@ -267,7 +293,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
       <p class="label">How this works</p>
       <h2>From snapshot to signal</h2>
       <p>Each indicator shows two windows side by side — a <strong>five-year</strong> arc for the structural story and a <strong>one-month</strong> close-up for the current move. A scheduled job pulls each latest figure once a day, so the curves build a genuine history over time.</p>
-      <p>The selection is deliberate: the <strong>EU-ETS carbon price</strong> is the cost Europe puts on emitting; <strong>copper</strong>, the <strong>platinum group metals</strong>, and <strong>lithium</strong> are the physical bottlenecks of electrification, clean hydrogen, and batteries; and <strong>Brent</strong> is the fossil benchmark the whole transition is racing to undercut. Brent, copper, and the platinum group metals come from live market feeds; carbon and lithium are daily proxies with the caveats noted above.</p>
+      <p>The selection is deliberate: the <strong>EU-ETS carbon price</strong> is the cost Europe puts on emitting; <strong>copper</strong>, the <strong>platinum group metals</strong>, <strong>lithium</strong>, and <strong>cobalt</strong> are the physical bottlenecks of electrification, clean hydrogen, and batteries; and <strong>Brent</strong> is the fossil benchmark the whole transition is racing to undercut. Brent, copper, and the platinum group metals come from live market feeds; carbon, lithium, and cobalt are manual snapshots with the caveats noted above.</p>
     </div>
   </section>
 
@@ -290,7 +316,7 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
   Chart.defaults.font.size=10;
   Chart.defaults.color='#6e6458';
   var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var RED='#b5564e', GOLD='#b8922a', GREEN='#5b8a72', GREY='#6e6458', PURPLE='#7a5fb0';
+  var RED='#b5564e', GOLD='#b8922a', GREEN='#5b8a72', GREY='#6e6458', PURPLE='#7a5fb0', COBALT='#2f6f9f';
 
   // ── sample-data generators (fallback only) ──
   function series(start, vol, drift, n){
@@ -319,7 +345,8 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
       pgm: {price:1005, changePct:0.4, asOf:lastDay,
             pt:s(series(960,28,0.8,N5),  series(985,12,0.7,N1)),
             pd:s(series(2400,55,-22,N5), series(1020,14,-0.3,N1))},
-      lithium: Object.assign({price:23400, changePct:2.1}, s(humped(14000,82000,N5),   series(21500,420,70,N1)))
+      lithium: Object.assign({price:23400, changePct:2.1}, s(humped(14000,82000,N5),   series(21500,420,70,N1))),
+      cobalt:  Object.assign({price:56290, changePct:0},   s(series(40000,3000,300,N5), series(55000,900,45,N1)))
     };
   }
 
@@ -405,13 +432,15 @@ h1,h2,h3 {font-family:'Playfair Display',Georgia,serif;font-weight:700;line-heig
         eua=merge(real,sample,'eua'),
         copper=merge(real,sample,'copper'),
         pgm=merge(real,sample,'pgm'),
-        lithium=merge(real,sample,'lithium');
+        lithium=merge(real,sample,'lithium'),
+        cobalt=merge(real,sample,'cobalt');
 
     renderSimple('brent', brent, '$', 2, RED,    'rgba(181,86,78,0.16)');
     renderSimple('eua',   eua,   '€', 2, GOLD,   'rgba(184,146,42,0.18)');
     renderSimple('copper',copper,'$', 0, GREEN,  'rgba(91,138,114,0.16)');
     renderPGM(pgm);
     renderSimple('lith', lithium,'$', 0, PURPLE,'rgba(122,95,176,0.16)');
+    renderSimple('cobalt',cobalt,'$', 0, COBALT,'rgba(47,111,159,0.16)');
 
     var anyReal = brent._real||eua._real||copper._real||pgm._real;
     var banner=document.getElementById('banner'), txt=document.getElementById('banner-text');

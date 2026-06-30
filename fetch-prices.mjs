@@ -83,6 +83,7 @@ const prev = await loadJSON('data.json', { indicators: {} });
 const manual = await loadJSON('manual.json', {
   eua: { price: 72.0, changePct: 0 },
   lithium: { price: 24500, changePct: 0 },
+  cobalt: { price: 56290, changePct: 0 },
 });
 
 const indicators = { ...prev.indicators };
@@ -112,6 +113,9 @@ try {
 
 // Lithium: no free real-time feed — manual.json
 indicators.lithium = { price: manual.lithium.price, changePct: 0, asOf: manual.lithium.asOf || null, manual: true };
+
+// Cobalt: no free real-time feed (no pure cobalt ETF/feed) — manual.json
+indicators.cobalt = { price: manual.cobalt.price, changePct: 0, asOf: manual.cobalt.asOf || null, manual: true };
 
 // Combine platinum + palladium into the single "pgm" card the page expects
 if (indicators.pt || indicators.pd) {

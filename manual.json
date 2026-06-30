@@ -1,5 +1,6 @@
 {
   "_comment": "Values with no free real-time feed. Edit 'price' and 'asOf' (YYYY-MM-DD) when you have a fresh figure; the card shows 'as of <asOf>' and only changes when you change these. EUA is overwritten automatically when Ember is reachable, and only falls back to this value otherwise.",
   "eua": { "price": 72.0, "asOf": "2026-06-12" },
-  "lithium": { "price": 24500, "asOf": "2026-06-12" }
+  "lithium": { "price": 24500, "asOf": "2026-06-12" },
+  "cobalt": { "price": 56290, "asOf": "2026-06-29" }
 }
